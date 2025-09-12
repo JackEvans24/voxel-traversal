@@ -8,7 +8,11 @@ namespace TraversalDemo.Controller
 {
     public class GameController : MonoBehaviour
     {
+        [Header("Grid")]
         [SerializeField] private CellAddress gridSize;
+
+        [Header("Line")]
+        [SerializeField] private Line line;
 
         private GridVisualiser gridVisualiser;
         private LineVisualiser lineVisualiser;
@@ -26,7 +30,7 @@ namespace TraversalDemo.Controller
             var gridCells = GridGenerationService.GenerateGrid(gridSize);
             gridVisualiser.UpdateGridUI(gridCells);
 
-            lineVisualiser.UpdateLine(new Line(Vector2.one * 1f, Vector2.one * 4.5f));
+            lineVisualiser.UpdateLine(line);
             
             cameraController.CenterCameraOnGrid(gridSize);
         }
