@@ -70,7 +70,7 @@ namespace TraversalDemo.Services
                     direction = stepY > 0 ? Direction.SOUTH : Direction.NORTH;
                 }
 
-                var cell = new Vector2(currentGridX, currentGridY);
+                var cell = new CellAddress(currentGridX, currentGridY);
                 yield return new VoxelTraversalData(cell, direction);
             }
         }
