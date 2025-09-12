@@ -1,13 +1,11 @@
-using UnityEngine;
-
-namespace TraversalDemo.Data
+namespace TraversalDemo.Models
 {
     public struct VoxelTraversalData
     {
-        public Vector2 Position;
+        public CellAddress Position;
         public Direction HitDirection;
 
-        public VoxelTraversalData(Vector2 position, Direction hitDirection)
+        public VoxelTraversalData(CellAddress position, Direction hitDirection)
         {
             Position = position;
             HitDirection = hitDirection;

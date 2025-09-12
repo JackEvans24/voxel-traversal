@@ -1,5 +1,5 @@
 using System;
-using TraversalDemo.Data;
+using TraversalDemo.Models;
 using UnityEngine;
 
 namespace TraversalDemo.Services
