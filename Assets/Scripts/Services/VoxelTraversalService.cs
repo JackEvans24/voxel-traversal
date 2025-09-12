@@ -51,26 +51,29 @@ namespace TraversalDemo.Services
                 sideDistY = (currentGridY + 1.0f - start.y) * deltaDistY;
             }
 
+            var cell = new CellAddress(currentGridX, currentGridY);
+            var direction = Direction.NONE;
+            yield return new VoxelTraversalData(cell, direction);
+
             // Perform DDA traversal
             while (currentGridX != endX || currentGridY != endY)
             {
-                Direction direction;
-
                 // Jump to next cell
                 if (sideDistX < sideDistY)
                 {
                     sideDistX += deltaDistX;
                     currentGridX += stepX;
+                    cell.x = currentGridX;
                     direction = stepX > 0 ? Direction.WEST : Direction.EAST;
                 }
                 else
                 {
                     sideDistY += deltaDistY;
                     currentGridY += stepY;
+                    cell.y = currentGridY;
                     direction = stepY > 0 ? Direction.SOUTH : Direction.NORTH;
                 }
 
-                var cell = new CellAddress(currentGridX, currentGridY);
                 yield return new VoxelTraversalData(cell, direction);
             }
         }
