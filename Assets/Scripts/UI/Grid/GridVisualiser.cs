@@ -6,9 +6,12 @@ namespace TraversalDemo.UI.Grid
 {
     public class GridVisualiser : MonoBehaviour
     {
-        [SerializeField] private GameObject gridCellPrefab;
+        [SerializeField] private GridCellUI gridCellPrefab;
 
-        private readonly Dictionary<CellAddress, GameObject> cellObjects = new();
+        [Header("Colours")]
+        [SerializeField] private Color hitCellColor = Color.red;
+
+        private readonly Dictionary<CellAddress, GridCellUI> cellObjects = new();
 
         public void UpdateGridUI(List<GridCell> cells)
         {
@@ -21,6 +24,17 @@ namespace TraversalDemo.UI.Grid
                 newCell.transform.position = new Vector2(cell.Address.x, cell.Address.y);
                 cellObjects.Add(cell.Address, newCell);
             }
+        }
+
+        public void SetHitCell(CellAddress address)
+        {
+            if (!cellObjects.TryGetValue(address, out var cell))
+            {
+                Debug.LogWarning($"Unable to get cell at address: {address.x}, {address.y}");
+                return;
+            }
+            
+            cell.SetCellColour(hitCellColor);
         }
     }
 }
