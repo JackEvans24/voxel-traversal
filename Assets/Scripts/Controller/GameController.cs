@@ -25,14 +25,5 @@ namespace TraversalDemo.Controller
             
             cameraController.CenterCameraOnGrid(gridSize);
         }
-
-        private T AddChildComponent<T>() where T : MonoBehaviour
-        {
-            var childGameObject = new GameObject(typeof(T).Name);
-            childGameObject.transform.parent = transform;
-
-            var component = childGameObject.AddComponent<T>();
-            return component;
-        }
     }
 }
