@@ -1,4 +1,4 @@
-namespace TraversalDemo.Data
+namespace TraversalDemo.Models
 {
     public enum Direction
     {

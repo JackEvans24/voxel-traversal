@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace TraversalDemo.Data
+namespace TraversalDemo.Models
 {
     public struct Line
     {
@@ -12,5 +12,7 @@ namespace TraversalDemo.Data
             Start = start;
             End = end;
         }
+
+        public Vector3[] GetPositions() => new Vector3[] { Start, End };
     }
 }

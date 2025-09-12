@@ -1,6 +1,4 @@
-using UnityEngine;
-
-namespace TraversalDemo.Data
+namespace TraversalDemo.Models
 {
     public struct VoxelTraversalData
     {

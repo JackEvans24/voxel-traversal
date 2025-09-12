@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace TraversalDemo.Data
+namespace TraversalDemo.Models
 {
     [Serializable]
     public struct CellAddress : IEquatable<CellAddress>
