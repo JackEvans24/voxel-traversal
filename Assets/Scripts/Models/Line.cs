@@ -1,11 +1,13 @@
+using System;
 using UnityEngine;
 
 namespace TraversalDemo.Models
 {
+    [Serializable]
     public struct Line
     {
-        public Vector2 Start;
-        public Vector2 End;
+        [SerializeField] public Vector2 Start;
+        [SerializeField] public Vector2 End;
 
         public Line(Vector2 start, Vector2 end)
         {
