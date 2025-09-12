@@ -33,6 +33,9 @@ namespace TraversalDemo.Controller
             lineVisualiser.UpdateLine(line);
             
             cameraController.CenterCameraOnGrid(gridSize);
+
+            foreach (var hitCellData in VoxelTraversalService.TraverseRay(line))
+                gridVisualiser.SetHitCell(hitCellData.Position);
         }
     }
 }
