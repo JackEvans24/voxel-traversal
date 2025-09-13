@@ -23,6 +23,8 @@ namespace TraversalDemo.Controller
             gridVisualiser = GetComponentInChildren<GridVisualiser>();
             lineVisualiser = GetComponentInChildren<LineVisualiser>();
             cameraController = gameObject.AddChildComponent<CameraController>();
+
+            lineVisualiser.LineHandlesUpdated += OnLineHandlesUpdated;
         }
 
         private void Start()
@@ -34,6 +36,18 @@ namespace TraversalDemo.Controller
             
             cameraController.CenterCameraOnGrid(gridSize);
 
+            foreach (var hitCellData in VoxelTraversalService.TraverseRay(line))
+                gridVisualiser.SetHitCell(hitCellData.Position);
+        }
+
+        private void OnLineHandlesUpdated(Vector3 lineStart, Vector3 lineEnd)
+        {
+            line.Start = lineStart;
+            line.End = lineEnd;
+
+            lineVisualiser.UpdateLine(line);
+            
+            gridVisualiser.ClearHitCells();
             foreach (var hitCellData in VoxelTraversalService.TraverseRay(line))
                 gridVisualiser.SetHitCell(hitCellData.Position);
         }

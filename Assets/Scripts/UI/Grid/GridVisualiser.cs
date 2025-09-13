@@ -12,6 +12,7 @@ namespace TraversalDemo.UI.Grid
         [SerializeField] private Color hitCellColor = Color.red;
 
         private readonly Dictionary<CellAddress, GridCellUI> cellObjects = new();
+        private readonly List<GridCellUI> hitCells = new();
 
         public void UpdateGridUI(List<GridCell> cells)
         {
@@ -35,6 +36,15 @@ namespace TraversalDemo.UI.Grid
             }
             
             cell.SetCellColour(hitCellColor);
+            
+            hitCells.Add(cell);
+        }
+
+        public void ClearHitCells()
+        {
+            foreach (var cell in hitCells)
+                cell.SetCellColour(Color.white);
+            hitCells.Clear();
         }
     }
 }
