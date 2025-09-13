@@ -46,6 +46,10 @@ namespace TraversalDemo.Controller
             line.End = lineEnd;
 
             lineVisualiser.UpdateLine(line);
+            
+            gridVisualiser.ClearHitCells();
+            foreach (var hitCellData in VoxelTraversalService.TraverseRay(line))
+                gridVisualiser.SetHitCell(hitCellData.Position);
         }
     }
 }
