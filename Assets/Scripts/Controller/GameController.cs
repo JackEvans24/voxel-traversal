@@ -24,7 +24,7 @@ namespace TraversalDemo.Controller
             lineVisualiser = GetComponentInChildren<LineVisualiser>();
             cameraController = gameObject.AddChildComponent<CameraController>();
 
-            lineVisualiser.LineHandlesUpdated += OnLineUpdated;
+            lineVisualiser.LineHandlesUpdated += OnLineHandlesUpdated;
         }
 
         private void Start()
@@ -40,7 +40,7 @@ namespace TraversalDemo.Controller
                 gridVisualiser.SetHitCell(hitCellData.Position);
         }
 
-        private void OnLineUpdated(Vector3 lineStart, Vector3 lineEnd)
+        private void OnLineHandlesUpdated(Vector3 lineStart, Vector3 lineEnd)
         {
             line.Start = lineStart;
             line.End = lineEnd;
