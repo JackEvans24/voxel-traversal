@@ -12,6 +12,12 @@ namespace TraversalDemo.UI.Line
         private Vector2 offset;
         private bool isDragging;
 
+        public void UpdatePosition(Vector3 newPosition)
+        {
+            if (isDragging) return;
+            transform.position = newPosition;
+        }
+
         private void Start()
         {
             cam = Camera.main;
