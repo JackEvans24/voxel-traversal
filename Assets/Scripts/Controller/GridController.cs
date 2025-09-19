@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using TraversalDemo.Models;
 using TraversalDemo.UI.Grid;
+using UnityEngine;
 
 namespace TraversalDemo.Controller
 {
@@ -34,6 +35,17 @@ namespace TraversalDemo.Controller
         {
             hitCells.Add(cell);
             gridVisualiser.SetHitCell(cell);
+        }
+
+        public bool IsWall(CellAddress address)
+        {
+            if (!cellData.TryGetValue(address, out var cell))
+            {
+                Debug.LogWarning($"Unable to get cell at address: {address.x}, {address.y}");
+                return false;
+            }
+
+            return cell.IsWall;
         }
 
         public void ClearHitCells()
