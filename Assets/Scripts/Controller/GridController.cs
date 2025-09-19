@@ -23,8 +23,7 @@ namespace TraversalDemo.Controller
 
             foreach (var cell in cells)
             {
-                if (cellData.TryGetValue(cell.Address, out _))
-                    continue;
+                cellData.Remove(cell.Address, out _);
                 cellData.Add(cell.Address, cell);
 
                 gridVisualiser.CreateGridCellUI(cell);
