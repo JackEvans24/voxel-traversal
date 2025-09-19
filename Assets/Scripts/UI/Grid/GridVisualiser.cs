@@ -8,43 +8,47 @@ namespace TraversalDemo.UI.Grid
     {
         [SerializeField] private GridCellUI gridCellPrefab;
 
-        [Header("Colours")]
-        [SerializeField] private Color hitCellColor = Color.red;
-
         private readonly Dictionary<CellAddress, GridCellUI> cellObjects = new();
-        private readonly List<GridCellUI> hitCells = new();
 
-        public void UpdateGridUI(List<GridCell> cells)
+        public void CreateGridCellUI(GridCell cell)
         {
-            foreach (var cell in cells)
-            {
-                if (cellObjects.TryGetValue(cell.Address, out _))
-                    continue;
+            if (cellObjects.TryGetValue(cell.Address, out _))
+                return;
 
-                var newCell = Instantiate(gridCellPrefab, transform);
-                newCell.transform.position = new Vector2(cell.Address.x, cell.Address.y);
-                cellObjects.Add(cell.Address, newCell);
-            }
+            var newCell = Instantiate(gridCellPrefab, transform);
+            newCell.transform.position = new Vector2(cell.Address.x, cell.Address.y);
+            newCell.SetGridCell(cell);
+            newCell.ResetCellColour();
+            cellObjects.Add(cell.Address, newCell);
+        }
+
+        public void ClearCells()
+        {
+            foreach (var (_, cellUI) in cellObjects)
+                Destroy(cellUI.gameObject);
+            cellObjects.Clear();
         }
 
         public void SetHitCell(CellAddress address)
         {
-            if (!cellObjects.TryGetValue(address, out var cell))
+            if (!cellObjects.TryGetValue(address, out var cellObject))
             {
                 Debug.LogWarning($"Unable to get cell at address: {address.x}, {address.y}");
                 return;
             }
-            
-            cell.SetCellColour(hitCellColor);
-            
-            hitCells.Add(cell);
+
+            cellObject.SetHitCell();
         }
 
-        public void ClearHitCells()
+        public void ResetCell(CellAddress address)
         {
-            foreach (var cell in hitCells)
-                cell.SetCellColour(Color.white);
-            hitCells.Clear();
+            if (!cellObjects.TryGetValue(address, out var cellObject))
+            {
+                Debug.LogWarning($"Unable to get cell at address: {address.x}, {address.y}");
+                return;
+            }
+
+            cellObject.ResetCellColour();
         }
     }
 }

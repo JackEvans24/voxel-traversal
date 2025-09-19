@@ -6,13 +6,13 @@ namespace TraversalDemo.Services
 {
     public class RayIntersectionService
     {
-        public static Vector2? GetIntersection(Line line, Vector2 gridCell, Direction hitDirection)
+        public static Vector2? GetIntersection(Line line, CellAddress gridCell, Direction hitDirection)
         {
             var cellWall = GetCellWall(gridCell, hitDirection);
             return GetIntersection(line, cellWall);
         }
 
-        private static Line GetCellWall(Vector2 gridCell, Direction wall)
+        private static Line GetCellWall(CellAddress gridCell, Direction wall)
         {
             return wall switch
             {

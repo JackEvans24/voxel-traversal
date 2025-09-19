@@ -29,5 +29,7 @@ namespace TraversalDemo.Models
         {
             return HashCode.Combine(x, y);
         }
+        
+        public static implicit operator Vector2(CellAddress address) => new(address.x, address.y);
     }
 }

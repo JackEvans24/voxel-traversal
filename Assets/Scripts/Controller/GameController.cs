@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TraversalDemo.Models;
 using TraversalDemo.Services;
 using TraversalDemo.UI.Grid;
@@ -10,34 +11,42 @@ namespace TraversalDemo.Controller
     {
         [Header("Grid")]
         [SerializeField] private CellAddress gridSize;
+        [SerializeField] private List<CellAddress> walls;
 
         [Header("Line")]
         [SerializeField] private Line line;
 
-        private GridVisualiser gridVisualiser;
+        [Header("Collision")]
+        [SerializeField] private GameObject collisionMarker;
+
         private LineVisualiser lineVisualiser;
         private CameraController cameraController;
+        private GridController gridController;
+        private CollisionController collisionController;
 
         private void Awake()
         {
-            gridVisualiser = GetComponentInChildren<GridVisualiser>();
             lineVisualiser = GetComponentInChildren<LineVisualiser>();
             cameraController = gameObject.AddChildComponent<CameraController>();
+            
+            var gridVisualiser = GetComponentInChildren<GridVisualiser>();
+            gridController = new GridController(gridVisualiser);
+
+            collisionController = new CollisionController(collisionMarker);
 
             lineVisualiser.LineHandlesUpdated += OnLineHandlesUpdated;
         }
 
         private void Start()
         {
-            var gridCells = GridGenerationService.GenerateGrid(gridSize);
-            gridVisualiser.UpdateGridUI(gridCells);
+            var gridCells = GridGenerationService.GenerateGrid(gridSize, walls);
+            gridController.SetCells(gridCells);
 
             lineVisualiser.UpdateLine(line);
             
             cameraController.CenterCameraOnGrid(gridSize);
 
-            foreach (var hitCellData in VoxelTraversalService.TraverseRay(line))
-                gridVisualiser.SetHitCell(hitCellData.Position);
+            SetHitCells();
         }
 
         private void OnLineHandlesUpdated(Vector3 lineStart, Vector3 lineEnd)
@@ -46,10 +55,27 @@ namespace TraversalDemo.Controller
             line.End = lineEnd;
 
             lineVisualiser.UpdateLine(line);
-            
-            gridVisualiser.ClearHitCells();
+
+            SetHitCells();
+        }
+
+        private void SetHitCells()
+        {
+            gridController.ClearHitCells();
+            collisionController.ResetCollision();
+
+            var collisionOccurred = false;
+
             foreach (var hitCellData in VoxelTraversalService.TraverseRay(line))
-                gridVisualiser.SetHitCell(hitCellData.Position);
+            {
+                gridController.SetHitCell(hitCellData.Position);
+
+                if (collisionOccurred || !gridController.IsWall(hitCellData.Position))
+                    continue;
+
+                collisionOccurred = true;
+                collisionController.UpdateCollision(line, hitCellData);
+            }
         }
     }
 }
