@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TraversalDemo.Models;
 using TraversalDemo.Services;
 using TraversalDemo.UI.Grid;
@@ -10,6 +11,7 @@ namespace TraversalDemo.Controller
     {
         [Header("Grid")]
         [SerializeField] private CellAddress gridSize;
+        [SerializeField] private List<CellAddress> walls;
 
         [Header("Line")]
         [SerializeField] private Line line;
@@ -29,7 +31,7 @@ namespace TraversalDemo.Controller
 
         private void Start()
         {
-            var gridCells = GridGenerationService.GenerateGrid(gridSize);
+            var gridCells = GridGenerationService.GenerateGrid(gridSize, walls);
             gridVisualiser.UpdateGridUI(gridCells);
 
             lineVisualiser.UpdateLine(line);

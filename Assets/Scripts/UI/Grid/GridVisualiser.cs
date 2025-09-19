@@ -8,9 +8,6 @@ namespace TraversalDemo.UI.Grid
     {
         [SerializeField] private GridCellUI gridCellPrefab;
 
-        [Header("Colours")]
-        [SerializeField] private Color hitCellColor = Color.red;
-
         private readonly Dictionary<CellAddress, GridCellUI> cellObjects = new();
         private readonly List<GridCellUI> hitCells = new();
 
@@ -23,6 +20,8 @@ namespace TraversalDemo.UI.Grid
 
                 var newCell = Instantiate(gridCellPrefab, transform);
                 newCell.transform.position = new Vector2(cell.Address.x, cell.Address.y);
+                newCell.SetGridCell(cell);
+                newCell.ResetCellColour();
                 cellObjects.Add(cell.Address, newCell);
             }
         }
@@ -35,7 +34,7 @@ namespace TraversalDemo.UI.Grid
                 return;
             }
             
-            cell.SetCellColour(hitCellColor);
+            cell.SetHitCell();
             
             hitCells.Add(cell);
         }
@@ -43,7 +42,7 @@ namespace TraversalDemo.UI.Grid
         public void ClearHitCells()
         {
             foreach (var cell in hitCells)
-                cell.SetCellColour(Color.white);
+                cell.ResetCellColour();
             hitCells.Clear();
         }
     }

@@ -5,7 +5,7 @@ namespace TraversalDemo.Services
 {
     public static class GridGenerationService
     {
-        public static List<GridCell> GenerateGrid(CellAddress gridSize)
+        public static List<GridCell> GenerateGrid(CellAddress gridSize, List<CellAddress> walls)
         {
             var result = new List<GridCell>();
             var currentCell = new CellAddress(0, 0);
@@ -16,7 +16,7 @@ namespace TraversalDemo.Services
                 for (int y = 0; y < gridSize.y; y++)
                 {
                     currentCell.y = y;
-                    var cell = new GridCell { Address = currentCell, IsWall = false };
+                    var cell = new GridCell { Address = currentCell, IsWall = walls.Contains(currentCell) };
                     result.Add(cell);
                 }
             }
