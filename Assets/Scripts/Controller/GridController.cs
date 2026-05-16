@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TraversalDemo.Models;
 using TraversalDemo.UI.Grid;
 using UnityEngine;
@@ -13,7 +14,7 @@ namespace TraversalDemo.Controller
         private readonly GridVisualiser gridVisualiser;
 
         private readonly Dictionary<CellAddress, GridCell> cellData = new();
-        private readonly List<CellAddress> hitCells = new();
+        private List<CellAddress> hitCells = new();
 
         public GridController(GridVisualiser gridVisualiser)
         {
@@ -34,11 +35,27 @@ namespace TraversalDemo.Controller
             }
         }
 
-        public void SetHitCell(CellAddress cell)
+        public void SetHitCells(IEnumerable<CellAddress> cells)
         {
-            if (!cellData.ContainsKey(cell)) return;
-            hitCells.Add(cell);
-            gridVisualiser.SetHitCell(cell);
+            var cellAddresses = cells.ToList();
+
+            // Reset cells no longer hit
+            foreach (var hitCell in hitCells.Except(cellAddresses))
+            {
+                if (!cellData.TryGetValue(hitCell, out var cell)) continue;
+                cell.IsHit = false;
+                gridVisualiser.UpdateGridCellUI(cell);
+            }
+
+            // Mark newly hit cells
+            foreach (var cellAddress in cellAddresses.Except(hitCells))
+            {
+                if (!cellData.TryGetValue(cellAddress, out var cell)) continue;
+                cell.IsHit = true;
+                gridVisualiser.UpdateGridCellUI(cell);
+            }
+
+            hitCells = cellAddresses;
         }
 
         public bool IsWall(CellAddress address)
@@ -52,13 +69,6 @@ namespace TraversalDemo.Controller
             return cell.IsWall;
         }
 
-        public void ClearHitCells()
-        {
-            foreach (var cell in hitCells)
-                gridVisualiser.ResetCell(cell);
-            hitCells.Clear();
-        }
-
         private void OnCellClicked(CellAddress cellAddress)
         {
             if (!cellData.TryGetValue(cellAddress, out var cell))
@@ -66,7 +76,7 @@ namespace TraversalDemo.Controller
 
             cell.IsWall = !cell.IsWall;
 
-            gridVisualiser.UpdateGridCellUI(cell, hitCells.Contains(cellAddress));
+            gridVisualiser.UpdateGridCellUI(cell);
 
             CellsUpdated?.Invoke();
         }

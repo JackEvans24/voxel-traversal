@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TraversalDemo.Models;
 using TraversalDemo.Services;
 using TraversalDemo.UI.Grid;
@@ -64,20 +65,20 @@ namespace TraversalDemo.Controller
 
         private void SetHitCells()
         {
-            gridController.ClearHitCells();
             collisionController.ResetCollision();
 
-            var collisionOccurred = false;
+            var hitCells = VoxelTraversalService.TraverseRay(line);
+            var voxelTraversalDataList = hitCells.ToList();
 
-            foreach (var hitCellData in VoxelTraversalService.TraverseRay(line))
+            gridController.SetHitCells(voxelTraversalDataList.Select(cell => cell.Position));
+
+            foreach (var hitCellData in voxelTraversalDataList)
             {
-                gridController.SetHitCell(hitCellData.Position);
-
-                if (collisionOccurred || !gridController.IsWall(hitCellData.Position))
+                if (!gridController.IsWall(hitCellData.Position))
                     continue;
 
-                collisionOccurred = true;
                 collisionController.UpdateCollision(line, hitCellData);
+                break;
             }
         }
     }

@@ -19,14 +19,15 @@ namespace TraversalDemo.UI.Grid
                 return;
 
             var newCell = Instantiate(gridCellPrefab, transform);
+            cellObjects.Add(cell.Address, newCell);
+
             newCell.transform.position = new Vector2(cell.Address.x, cell.Address.y);
             newCell.SetGridCell(cell);
-            newCell.ResetCellColour();
+            UpdateGridCellUI(cell);
             newCell.Clicked += OnCellClicked;
-            cellObjects.Add(cell.Address, newCell);
         }
 
-        public void UpdateGridCellUI(GridCell cell, bool isHit)
+        public void UpdateGridCellUI(GridCell cell)
         {
             if (!cellObjects.TryGetValue(cell.Address, out var newCell))
             {
@@ -34,7 +35,7 @@ namespace TraversalDemo.UI.Grid
                 return;
             }
             
-            if (isHit)
+            if (cell.IsHit)
                 newCell.SetHitCell();
             else
                 newCell.ResetCellColour();
@@ -48,28 +49,6 @@ namespace TraversalDemo.UI.Grid
                 Destroy(cellUI.gameObject);
             }
             cellObjects.Clear();
-        }
-
-        public void SetHitCell(CellAddress address)
-        {
-            if (!cellObjects.TryGetValue(address, out var cellObject))
-            {
-                Debug.LogWarning($"Unable to get cell at address: {address.x}, {address.y}");
-                return;
-            }
-
-            cellObject.SetHitCell();
-        }
-
-        public void ResetCell(CellAddress address)
-        {
-            if (!cellObjects.TryGetValue(address, out var cellObject))
-            {
-                Debug.LogWarning($"Unable to get cell at address: {address.x}, {address.y}");
-                return;
-            }
-
-            cellObject.ResetCellColour();
         }
 
         private void OnCellClicked(CellAddress cellAddress) => CellClicked?.Invoke(cellAddress);
