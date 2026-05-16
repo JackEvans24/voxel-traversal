@@ -35,6 +35,7 @@ namespace TraversalDemo.Controller
             collisionController = new CollisionController(collisionMarker);
 
             lineVisualiser.LineHandlesUpdated += OnLineHandlesUpdated;
+            gridController.CellsUpdated += OnCellsUpdated;
         }
 
         private void Start()
@@ -58,6 +59,8 @@ namespace TraversalDemo.Controller
 
             SetHitCells();
         }
+
+        private void OnCellsUpdated() => SetHitCells();
 
         private void SetHitCells()
         {
