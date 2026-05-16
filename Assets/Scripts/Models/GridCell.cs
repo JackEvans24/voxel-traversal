@@ -1,6 +1,6 @@
 namespace TraversalDemo.Models
 {
-    public struct GridCell
+    public class GridCell
     {
         public CellAddress Address { get; set; }
         public bool IsWall { get; set; }
