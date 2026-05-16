@@ -18,27 +18,27 @@ namespace TraversalDemo.UI.Grid
             if (cellObjects.TryGetValue(cell.Address, out _))
                 return;
 
-            var newCell = Instantiate(gridCellPrefab, transform);
-            cellObjects.Add(cell.Address, newCell);
+            var cellUI = Instantiate(gridCellPrefab, transform);
+            cellObjects.Add(cell.Address, cellUI);
 
-            newCell.transform.position = new Vector2(cell.Address.x, cell.Address.y);
-            newCell.SetGridCell(cell);
+            cellUI.transform.position = new Vector2(cell.Address.x, cell.Address.y);
+            cellUI.SetGridCell(cell);
             UpdateGridCellUI(cell);
-            newCell.Clicked += OnCellClicked;
+            cellUI.Clicked += OnCellClicked;
         }
 
         public void UpdateGridCellUI(GridCell cell)
         {
-            if (!cellObjects.TryGetValue(cell.Address, out var newCell))
+            if (!cellObjects.TryGetValue(cell.Address, out var cellUI))
             {
                 Debug.LogError("Trying to update a cell that doesn't exist");
                 return;
             }
             
             if (cell.IsHit)
-                newCell.SetHitCell();
+                cellUI.SetHitCell();
             else
-                newCell.ResetCellColour();
+                cellUI.ResetCellColour();
         }
 
         public void ClearCells()
