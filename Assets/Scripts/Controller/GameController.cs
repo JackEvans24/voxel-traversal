@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TraversalDemo.Models;
 using TraversalDemo.Services;
 using TraversalDemo.UI.Grid;
@@ -24,6 +25,8 @@ namespace TraversalDemo.Controller
         private GridController gridController;
         private CollisionController collisionController;
 
+        private IEnumerable<VoxelTraversalData> cachedHitCells;
+
         private void Awake()
         {
             lineVisualiser = GetComponentInChildren<LineVisualiser>();
@@ -35,6 +38,7 @@ namespace TraversalDemo.Controller
             collisionController = new CollisionController(collisionMarker);
 
             lineVisualiser.LineHandlesUpdated += OnLineHandlesUpdated;
+            gridController.CellsUpdated += OnCellsUpdated;
         }
 
         private void Start()
@@ -59,22 +63,28 @@ namespace TraversalDemo.Controller
             SetHitCells();
         }
 
-        private void SetHitCells()
+        private void OnCellsUpdated() => SetHitCells(recalculateHitData: false);
+
+        private void SetHitCells(bool recalculateHitData = true)
         {
-            gridController.ClearHitCells();
             collisionController.ResetCollision();
 
-            var collisionOccurred = false;
-
-            foreach (var hitCellData in VoxelTraversalService.TraverseRay(line))
+            if (recalculateHitData)
             {
-                gridController.SetHitCell(hitCellData.Position);
+                var hitCells = VoxelTraversalService.TraverseRay(line);
+                var voxelTraversalDataList = hitCells.ToList();
+                cachedHitCells = voxelTraversalDataList;
+            }
 
-                if (collisionOccurred || !gridController.IsWall(hitCellData.Position))
+            gridController.SetHitCells(cachedHitCells.Select(cell => cell.Position));
+
+            foreach (var hitCellData in cachedHitCells)
+            {
+                if (!gridController.IsWall(hitCellData.Position))
                     continue;
 
-                collisionOccurred = true;
                 collisionController.UpdateCollision(line, hitCellData);
+                break;
             }
         }
     }

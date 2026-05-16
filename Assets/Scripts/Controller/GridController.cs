@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using TraversalDemo.Models;
 using TraversalDemo.UI.Grid;
 using UnityEngine;
@@ -7,14 +9,17 @@ namespace TraversalDemo.Controller
 {
     public class GridController
     {
+        public event Action CellsUpdated;
+
         private readonly GridVisualiser gridVisualiser;
 
         private readonly Dictionary<CellAddress, GridCell> cellData = new();
-        private readonly List<CellAddress> hitCells = new();
+        private List<CellAddress> hitCells = new();
 
         public GridController(GridVisualiser gridVisualiser)
         {
             this.gridVisualiser = gridVisualiser;
+            this.gridVisualiser.CellClicked += OnCellClicked;
         }
 
         public void SetCells(List<GridCell> cells)
@@ -30,10 +35,27 @@ namespace TraversalDemo.Controller
             }
         }
 
-        public void SetHitCell(CellAddress cell)
+        public void SetHitCells(IEnumerable<CellAddress> cells)
         {
-            hitCells.Add(cell);
-            gridVisualiser.SetHitCell(cell);
+            var cellAddresses = cells.ToList();
+
+            // Reset cells no longer hit
+            foreach (var hitCell in hitCells.Except(cellAddresses))
+            {
+                if (!cellData.TryGetValue(hitCell, out var cell)) continue;
+                cell.IsHit = false;
+                gridVisualiser.UpdateGridCellUI(cell);
+            }
+
+            // Mark newly hit cells
+            foreach (var cellAddress in cellAddresses.Except(hitCells))
+            {
+                if (!cellData.TryGetValue(cellAddress, out var cell)) continue;
+                cell.IsHit = true;
+                gridVisualiser.UpdateGridCellUI(cell);
+            }
+
+            hitCells = cellAddresses;
         }
 
         public bool IsWall(CellAddress address)
@@ -47,11 +69,16 @@ namespace TraversalDemo.Controller
             return cell.IsWall;
         }
 
-        public void ClearHitCells()
+        private void OnCellClicked(CellAddress cellAddress)
         {
-            foreach (var cell in hitCells)
-                gridVisualiser.ResetCell(cell);
-            hitCells.Clear();
+            if (!cellData.TryGetValue(cellAddress, out var cell))
+                Debug.LogError($"Trying to click cell that doesn't exist: {cellAddress}");
+
+            cell.IsWall = !cell.IsWall;
+
+            gridVisualiser.UpdateGridCellUI(cell);
+
+            CellsUpdated?.Invoke();
         }
     }
 }

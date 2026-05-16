@@ -15,6 +15,8 @@ namespace TraversalDemo.Models
             this.y = y;
         }
 
+        public override string ToString() => $"x: {x}, y: {y}";
+
         public bool Equals(CellAddress other)
         {
             return x == other.x && y == other.y;
