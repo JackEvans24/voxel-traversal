@@ -26,6 +26,20 @@ namespace TraversalDemo.UI.Grid
             cellObjects.Add(cell.Address, newCell);
         }
 
+        public void UpdateGridCellUI(GridCell cell, bool isHit)
+        {
+            if (!cellObjects.TryGetValue(cell.Address, out var newCell))
+            {
+                Debug.LogError("Trying to update a cell that doesn't exist");
+                return;
+            }
+            
+            if (isHit)
+                newCell.SetHitCell();
+            else
+                newCell.ResetCellColour();
+        }
+
         public void ClearCells()
         {
             foreach (var (_, cellUI) in cellObjects)
