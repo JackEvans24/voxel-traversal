@@ -25,6 +25,8 @@ namespace TraversalDemo.Controller
         private GridController gridController;
         private CollisionController collisionController;
 
+        private IEnumerable<VoxelTraversalData> cachedHitCells;
+
         private void Awake()
         {
             lineVisualiser = GetComponentInChildren<LineVisualiser>();
@@ -61,18 +63,22 @@ namespace TraversalDemo.Controller
             SetHitCells();
         }
 
-        private void OnCellsUpdated() => SetHitCells();
+        private void OnCellsUpdated() => SetHitCells(recalculateHitData: false);
 
-        private void SetHitCells()
+        private void SetHitCells(bool recalculateHitData = true)
         {
             collisionController.ResetCollision();
 
-            var hitCells = VoxelTraversalService.TraverseRay(line);
-            var voxelTraversalDataList = hitCells.ToList();
+            if (recalculateHitData)
+            {
+                var hitCells = VoxelTraversalService.TraverseRay(line);
+                var voxelTraversalDataList = hitCells.ToList();
+                cachedHitCells = voxelTraversalDataList;
+            }
 
-            gridController.SetHitCells(voxelTraversalDataList.Select(cell => cell.Position));
+            gridController.SetHitCells(cachedHitCells.Select(cell => cell.Position));
 
-            foreach (var hitCellData in voxelTraversalDataList)
+            foreach (var hitCellData in cachedHitCells)
             {
                 if (!gridController.IsWall(hitCellData.Position))
                     continue;
