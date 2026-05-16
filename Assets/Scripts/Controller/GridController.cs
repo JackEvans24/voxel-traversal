@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TraversalDemo.Models;
 using TraversalDemo.UI.Grid;
 using UnityEngine;
@@ -7,6 +8,8 @@ namespace TraversalDemo.Controller
 {
     public class GridController
     {
+        public event Action CellsUpdated;
+
         private readonly GridVisualiser gridVisualiser;
 
         private readonly Dictionary<CellAddress, GridCell> cellData = new();
@@ -15,6 +18,7 @@ namespace TraversalDemo.Controller
         public GridController(GridVisualiser gridVisualiser)
         {
             this.gridVisualiser = gridVisualiser;
+            this.gridVisualiser.CellClicked += OnCellClicked;
         }
 
         public void SetCells(List<GridCell> cells)
@@ -32,6 +36,7 @@ namespace TraversalDemo.Controller
 
         public void SetHitCell(CellAddress cell)
         {
+            if (!cellData.ContainsKey(cell)) return;
             hitCells.Add(cell);
             gridVisualiser.SetHitCell(cell);
         }
@@ -52,6 +57,18 @@ namespace TraversalDemo.Controller
             foreach (var cell in hitCells)
                 gridVisualiser.ResetCell(cell);
             hitCells.Clear();
+        }
+
+        private void OnCellClicked(CellAddress cellAddress)
+        {
+            if (!cellData.TryGetValue(cellAddress, out var cell))
+                Debug.LogError($"Trying to click cell that doesn't exist: {cellAddress}");
+
+            cell.IsWall = !cell.IsWall;
+
+            gridVisualiser.UpdateGridCellUI(cell, hitCells.Contains(cellAddress));
+
+            CellsUpdated?.Invoke();
         }
     }
 }

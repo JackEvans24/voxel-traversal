@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TraversalDemo.Models;
 using UnityEngine;
@@ -6,6 +7,8 @@ namespace TraversalDemo.UI.Grid
 {
     public class GridVisualiser : MonoBehaviour
     {
+        public event Action<CellAddress> CellClicked;
+
         [SerializeField] private GridCellUI gridCellPrefab;
 
         private readonly Dictionary<CellAddress, GridCellUI> cellObjects = new();
@@ -19,13 +22,17 @@ namespace TraversalDemo.UI.Grid
             newCell.transform.position = new Vector2(cell.Address.x, cell.Address.y);
             newCell.SetGridCell(cell);
             newCell.ResetCellColour();
+            newCell.Clicked += OnCellClicked;
             cellObjects.Add(cell.Address, newCell);
         }
 
         public void ClearCells()
         {
             foreach (var (_, cellUI) in cellObjects)
+            {
+                cellUI.Clicked -= OnCellClicked;
                 Destroy(cellUI.gameObject);
+            }
             cellObjects.Clear();
         }
 
@@ -50,5 +57,7 @@ namespace TraversalDemo.UI.Grid
 
             cellObject.ResetCellColour();
         }
+
+        private void OnCellClicked(CellAddress cellAddress) => CellClicked?.Invoke(cellAddress);
     }
 }
